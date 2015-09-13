@@ -1,0 +1,22 @@
+{
+    "name": "mt3/packagemanager",
+    "type": "typo3-flow-package",
+    "description": "Simple package manager for TYPO3 Flow",
+    "version": "0.1.0",
+    "license": ["GPL-3.0+"],
+    "authors": [
+        {
+            "name": "Martin Tepper",
+            "email": "martintepper@dev-mt.de",
+            "role": "Founder"
+        }
+    ],
+    "require": {
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "MT3\\PackageManager": "Classes"
+        }
+    }
+}

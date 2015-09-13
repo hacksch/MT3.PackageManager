@@ -1,0 +1,68 @@
+<f:layout name="Default" />
+{namespace mt3=MT3\PackageManager\ViewHelpers}
+
+<f:section name="Title"><f:translate id="title" /></f:section>
+
+<f:section name="Content">
+    <table>
+        <thead>
+            <th><f:translate id="table.actions" /></th>
+            <th><f:translate id="table.state" /></th>
+            <th><f:translate id="table.packageName" /></th>
+            <th><f:translate id="table.version" /></th>
+            <th><f:translate id="table.description" /></th>
+        </thead>
+        <tbody>
+            <f:for each="{availablePackages}" as="package">
+            <tr>
+                <td>
+                    <mt3:arrayKeyExists array="{activePackages}" key="{package.packageKey}">
+                        <f:then>
+                            <f:if condition="{package.protected} != 1">
+                                <f:then>
+                                    <f:form action="deactivate">
+                                        <f:form.hidden name="packageKey" value="{package.packageKey}" />
+                
+                                        <f:form.button>
+                                            <f:translate id="button.deactivate" />
+                                        </f:form.button>
+                                    </f:form>
+                                </f:then>
+                            </f:if>
+                        </f:then>
+                        <f:else>
+                            <f:form action="activate">
+                                <f:form.hidden name="packageKey" value="{package.packageKey}" />
+        
+                                <f:form.button>
+                                    <f:translate id="button.activate" />
+                                </f:form.button>
+                            </f:form>
+                            <f:form action="delete">
+                                <f:form.hidden name="packageKey" value="{package.packageKey}" />
+        
+                                <f:form.button>
+                                    <f:translate id="button.delete" />
+                                </f:form.button>
+                            </f:form>
+                        </f:else>
+                    </mt3:arrayKeyExists>
+                </td>
+                <td>
+                    <mt3:arrayKeyExists array="{activePackages}" key="{package.packageKey}">
+                        <f:then>
+                            <f:translate id="state.active" />
+                        </f:then>
+                        <f:else>
+                            <f:translate id="state.inactive" />
+                        </f:else>
+                    </mt3:arrayKeyExists>
+                </td>
+                <td>{package.packageKey}</td>
+                <td>{package.composerManifest.version}</td>
+                <td>{package.composerManifest.description}</td>
+            </tr>
+            </f:for>
+        </tbody>
+    </table>
+</f:section>

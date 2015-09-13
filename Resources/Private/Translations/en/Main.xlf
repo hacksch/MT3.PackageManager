@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file original="" source-language="en" target-language="de" datatype="plaintext">
+    <body>
+      <trans-unit id="title">
+        <source>Package Manager</source>
+      </trans-unit>
+      <trans-unit id="table.actions">
+        <source>Actions</source>
+      </trans-unit>
+      <trans-unit id="table.packageKey">
+        <source>Key</source>
+      </trans-unit>
+      <trans-unit id="table.state">
+        <source>State</source>
+      </trans-unit>
+      <trans-unit id="table.version">
+        <source>Version</source>
+      </trans-unit>
+      <trans-unit id="table.description">
+        <source>Description</source>
+      </trans-unit>
+      <trans-unit id="state.active">
+        <source>Active</source>
+      </trans-unit>
+      <trans-unit id="state.inactive">
+        <source>Inactive</source>
+      </trans-unit>
+      <trans-unit id="button.activate">
+        <source>Activate</source>
+      </trans-unit>
+      <trans-unit id="button.deactivate">
+        <source>Deactivate</source>
+      </trans-unit>
+      <trans-unit id="button.delete">
+        <source>Delete</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff> 
