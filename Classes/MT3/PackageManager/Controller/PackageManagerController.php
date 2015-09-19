@@ -17,6 +17,12 @@ class PackageManagerController extends \TYPO3\Flow\Mvc\Controller\ActionControll
     protected $packageManager;
     
     /**
+     * @var \MT3\PackageManager\Service\PackageDependency
+     * @Flow\Inject
+     */
+    protected $packageDependencyService;
+    
+    /**
      * Activated packages
      */
     protected $activePackages;
@@ -57,9 +63,14 @@ class PackageManagerController extends \TYPO3\Flow\Mvc\Controller\ActionControll
             $this->redirect('index');
         }
         
-        if ($this->hasMissingRequirements($packageKey) === false) {
-            $this->packageManager->activatePackage($packageKey);
+        if ($requiredPackage = $this->packageDependencyService->getMissingPackageRequirements($packageKey)) {
+            $this->flashMessageContainer->addMessage(
+                new \TYPO3\Flow\Error\Error('Package '. $packageKey .' could not activate. '. $requiredPackage .' not active or missing.')
+            );
+            $this->redirect('index');
         }
+        
+        $this->packageManager->activatePackage($packageKey);
         
         $this->redirect('index');
     }
@@ -99,75 +110,15 @@ class PackageManagerController extends \TYPO3\Flow\Mvc\Controller\ActionControll
             $this->redirect('index');
         }
         
-        if ($this->isPackageRequired($packageKey) === false) {
-            $this->packageManager->deactivatePackage($packageKey);
+        if ($requiredBy = $this->packageDependencyService->getPackageRequirements($packageKey)) {
+            $this->flashMessageContainer->addMessage(
+                new \TYPO3\Flow\Error\Error('Package '. $packageKey .' is required by '. $requiredBy)
+            );
+            $this->redirect('index');
         }
+        
+        $this->packageManager->deactivatePackage($packageKey);
         
         $this->redirect('index');
-    }
-    
-    /**
-     * @param string $packageName
-     * @return bool
-     */
-    private function isPackageActiveByName($packageName) {
-        $foundPackage = false;
-        
-        foreach($this->activePackages as $key => $package) {
-            if (property_exists($package->getComposerManifest(), 'name') == true &&
-                $package->getComposerManifest()->name == $packageName) {
-                
-                $foundPackage = true;
-                break;
-            }
-        }
-        
-        return $foundPackage;
-    }
-    
-    /**
-     * @param string $packageKey
-     * @return bool
-     */
-    private function isPackageRequired($packageKey) {
-        $packageName = $this->availablePackages[$packageKey]->getComposerManifest()->name;
-        
-        foreach($this->activePackages as $key => $package) {
-            
-            if (property_exists($package->getComposerManifest(), 'require') == true &&
-                array_key_exists($packageName, $package->getComposerManifest()->require)) {
-                    
-                $this->flashMessageContainer->addMessage(
-                    new \TYPO3\Flow\Error\Error('Package '. $packageKey .' is required from '. $key .'.')
-                );
-                $this->redirect('index');
-            }
-        }
-        
-        return false;
-    }
-
-    /**
-     * @param string $packageKey
-     * @return bool
-     */
-    private function hasMissingRequirements($packageKey) {
-        if (property_exists($this->availablePackages[$packageKey]->getComposerManifest(), 'require') == true) {
-            $requiredPackages = $this->availablePackages[$packageKey]->getComposerManifest()->require;
-            foreach(array_keys((array) $requiredPackages) as $requiredPackageName) {
-                // Simple check if requirement is a package
-                if(strpos($requiredPackageName, '/') === false) {
-                     continue;
-                }
-                
-                if ($this->isPackageActiveByName($requiredPackageName) === false) {
-                    $this->flashMessageContainer->addMessage(
-                        new \TYPO3\Flow\Error\Error('Package '. $packageKey .' requires '. $requiredPackageName .'.')
-                    );
-                    $this->redirect('index');
-                }
-            }
-            return false;
-        }
     }
 }
